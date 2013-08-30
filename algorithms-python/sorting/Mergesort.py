@@ -42,16 +42,15 @@ def printList(lst):
 
 def __main__():
     unsorted = []
-    for i in range(100):
+    for i in range(1000000):
         unsorted.append(i)
-        random.shuffle(unsorted)
 
-    printList(unsorted)
-    print "start time $d", (datetime.datetime.now())
-    unsorted = mergesort(unsorted) 
-    print "end time $d", (datetime.datetime.now())
-    print "After sorting"
-    printList(unsorted)
+    #printList(unsorted)
+    startTime = datetime.datetime.now()
+    mergesort(unsorted) 
+    endTime = datetime.datetime.now()
+    print endTime - startTime
+    #printList(unsorted)
 
 if __name__ == '__main__':  
     __main__()
