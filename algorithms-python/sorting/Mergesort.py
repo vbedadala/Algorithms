@@ -42,7 +42,7 @@ def printList(lst):
 
 def __main__():
     unsorted = []
-    for i in range(1000000):
+    for i in range(10000000):
         unsorted.append(i)
 
     #printList(unsorted)

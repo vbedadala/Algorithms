@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import stack.Queue;
 import stack.Stack;
 
 public class BinarySearchTree {
@@ -14,9 +13,10 @@ public class BinarySearchTree {
 
     public static class Node {
 	private Integer value;
-	public Node left;
+	private Node left;
 	private Node right;
 	private Node rightSibling;
+	private Node parent;
 
 	public Node(Integer value) {
 	    this.value = value;
@@ -25,6 +25,13 @@ public class BinarySearchTree {
 	@Override
 	public String toString() {
 	    return value + " ";
+	}
+
+	public Boolean isLeftChild() {
+	    if (this.parent.left == this) {
+		return true;
+	    } else
+		return false;
 	}
 
     }
@@ -37,26 +44,123 @@ public class BinarySearchTree {
 	}
     }
 
-    private boolean insert(Integer value, Node parent) {
+    private boolean insert(Integer value, Node node) {
 
-	if (value < parent.value) {
-	    if (parent.left == null) {
-		parent.left = new Node(value);
+	if (value <= node.value) {
+	    if (node.left == null) {
+		node.left = new Node(value);
+		node.left.parent = node;
 		return true;
 	    }
-	    insert(value, parent.left);
+	    insert(value, node.left);
 	}
-	if (value > parent.value) {
-	    if (parent.right == null) {
-		parent.right = new Node(value);
+	if (value > node.value) {
+	    if (node.right == null) {
+		node.right = new Node(value);
+		node.right.parent = node;
 		return true;
 	    }
-	    insert(value, parent.right);
+	    insert(value, node.right);
 	}
 
 	return false;
     }
 
+    public void delete(Integer value) {
+	Node nodeToBeDeleted = find(value, root);
+	if (nodeToBeDeleted == null) {
+	    System.out.println("Node to be deleted is not found");
+	    return;
+	}
+
+	if (nodeToBeDeleted.left == null && nodeToBeDeleted.right == null) {
+	    // trash the node without a thought. Very simple
+	    if (nodeToBeDeleted.isLeftChild())
+		nodeToBeDeleted.parent.left = null;
+	    else
+		nodeToBeDeleted.parent.right = null;
+	    nodeToBeDeleted = null;
+	    return;
+	}
+
+	if (nodeToBeDeleted.right == null && nodeToBeDeleted.left != null) {
+
+	    if (nodeToBeDeleted.isLeftChild())
+		nodeToBeDeleted.parent.left = nodeToBeDeleted.left;
+	    else
+		nodeToBeDeleted.parent.right = nodeToBeDeleted.left;
+	    nodeToBeDeleted = null;
+	    return;
+	}
+
+	if (nodeToBeDeleted.left == null && nodeToBeDeleted.right != null) {
+	    if (nodeToBeDeleted.isLeftChild())
+		nodeToBeDeleted.parent.left = nodeToBeDeleted.right;
+	    else
+		nodeToBeDeleted.parent.right = nodeToBeDeleted.right;
+	    nodeToBeDeleted = null;
+	    return;
+
+	}
+
+	// Final case. where there are Left and right children( may beSubtrees)
+	// We can either replace our node to be deleted with previous node or
+	// next node.
+
+	if (nodeToBeDeleted.right != null && nodeToBeDeleted.left != null) {
+	    Node successor = successor(nodeToBeDeleted);
+	    int temp = 0;
+
+	    temp = nodeToBeDeleted.value;
+	    nodeToBeDeleted.value = successor.value;
+	    successor.value = temp;
+
+	    if (successor.isLeftChild()) {
+		successor.parent.left = null;
+	    } else {
+		successor.parent.right = null;
+		successor = null;
+	    }
+	}
+
+    }
+
+    private Node successor(Node node) {
+	if (node.right != null) {
+	    return minOfSubtree(node);
+	} else {
+	    Node tempNode = node.parent;
+	    while (tempNode.value < node.value) {
+		tempNode = tempNode.parent;
+	    }
+	    return tempNode;
+	}
+    }
+
+    private Node minOfSubtree(Node node) {
+	while (node.left != null) {
+	    node = node.left;
+	}
+	return node;
+    }
+
+    private Node find(Integer value, Node node) {
+
+	// Base cases!
+	if (node == null) {
+	    return null;
+	}
+	if (node.value == value) {
+	    return node;
+	}
+
+	if (value <= node.value) {
+	    return find(value, node.left);
+	} else {
+	    return find(value, node.right);
+	}
+
+    }
 
     public void inOrder() {
 	System.out.println("InOrder");
@@ -87,9 +191,12 @@ public class BinarySearchTree {
 	if (node == null) {
 	    return;
 	}
+
 	inOrder(node.left);
 	System.out.print(node.value + " ");
+
 	inOrder(node.right);
+
     }
 
     // prints the preorder traversal of the tree
@@ -117,54 +224,122 @@ public class BinarySearchTree {
     }
 
     public void levelOrder(Node node) {
-	Queue<BinarySearchTree.Node> q = new Queue<BinarySearchTree.Node>();
-	q.insert(node);
+	java.util.Queue<Node> queue = new LinkedList<Node>();
+	queue.add(node);
+	while (!queue.isEmpty()) {
+	    node = queue.remove();
+	    System.out.print(node.value + " ");
 
-	while (!q.isEmpty()) {
-	    // visit Queue's top element
-	    Node topNode = q.delete();
-	    System.out.print(topNode.value + "    ");
-
-	    if (topNode.left != null) {
-		q.insert(topNode.left);
+	    if (node.left != null) {
+		queue.add(node.left);
 	    }
-
-	    if (topNode.right != null) {
-		q.insert(topNode.right);
+	    if (node.right != null) {
+		queue.add(node.right);
 	    }
-
 	}
+
     }
 
-    public void levelOrderUsingList() {
-	List<Node> list = new LinkedList<Node>();
-	list.add(root);
-	while (!list.isEmpty()) {
-	    int levelSize = list.size();
-	    for (int i = 0; i < levelSize; i++) {
-		Node n = list.remove(0);
-		System.out.print(n.value + " ");
-		if (n.left != null) {
-		    list.add(n.left);
-		}
-		if (n.right != null) {
-		    list.add(n.right);
-		}
+    public void reverseLevelOrder() {
+	java.util.Queue<Node> queue = new LinkedList<Node>();
+	java.util.Stack<Node> stack = new java.util.Stack<BinarySearchTree.Node>();
+	Node node = root;
+	Node dummy = new Node(-1);
+	queue.add(node);
+	int currLevelCount = 1;
+	int nextLevelCount = 0;
+	while (!queue.isEmpty()) {
+	    node = queue.remove();
+	    currLevelCount--;
+	   
+	    // System.out.print(node.value + " ");
+	    stack.push(node);
+	    if (node.right != null) {
+		queue.add(node.right);
+		nextLevelCount++;
+	    }
+	    if (node.left != null) {
+		queue.add(node.left);
+		nextLevelCount++;
 	    }
 
+	    if (currLevelCount == 0) {
+		currLevelCount = nextLevelCount;
+		nextLevelCount = 0;
+		stack.push(dummy);
+
+	    }
+
+	 
+	}
+	   while (!stack.isEmpty()) {
+			if (stack.peek() != dummy) {
+			    System.out.print(stack.pop() + " ");
+			} else {
+			    stack.pop();
+			    System.out.println();
+			}
+		    }
+
+    }
+
+    public void printLevelByLevel() {
+
+	List<Node> levelList = new LinkedList<Node>();
+	levelList.add(root);
+	boolean firstElement = true;
+
+	while (!levelList.isEmpty()) {
+	    List<Node> nextLevelList = new LinkedList<BinarySearchTree.Node>();
+	    for (Node n : levelList) {
+		StringBuilder nodeDisplay = new StringBuilder();
+		if (n.left != null) {
+		    nextLevelList.add(n.left);
+		}
+
+		if (n == root)
+		    System.out.print(+n.value + " ");
+
+		else if (n.isLeftChild())
+		    System.out.print("L: " + n.value + " ");
+		else
+		    System.out.print("R: " + n.value + " ");
+
+		if (n.right != null) {
+		    nextLevelList.add(n.right);
+		    // System.out.print("  ");
+
+		}
+	    }
+	    levelList.clear();
+	    levelList.addAll(nextLevelList);
 	    System.out.println();
 	}
 
     }
 
-    public void preOrderIterative() {
+    public static String repeat(String str, int times) {
+	StringBuilder ret = new StringBuilder();
+	for (int i = 0; i < times; i++)
+	    ret.append(str);
+	return ret.toString();
+    }
 
-	Stack<BinarySearchTree.Node> stack = new Stack<BinarySearchTree.Node>(3);
+    /*
+     * Idea : Use stack, pop & print. Push the right child first and then left
+     * child in order for left to processed first! Psuedo code -> Push root for
+     * stack while : pop the top element ( Print value) push right child as
+     * right needs to be processed second push left child as left needs to be
+     * processed first end while
+     */
+    public void preOrderIterative() {
+	java.util.Stack<Node> stack = new java.util.Stack<Node>();
+
 	stack.push(root);
-	Node currNode;
+
 	while (!stack.isEmpty()) {
-	    // print the node
-	    currNode = stack.pop();
+	    Node currNode = stack.pop();
+	    System.out.print(currNode.value + " ");
 	    if (currNode.right != null) {
 		stack.push(currNode.right);
 	    }
@@ -177,91 +352,122 @@ public class BinarySearchTree {
 
     }
 
+    /*
+     * Idea: Use stack, push root first. Push left childs. When pop the left
+     * child, push right to be processed
+     * 
+     * Psuedo code : push root to stack currNode <-null while stack Not empty
+     * and CurrNode not null( initially stack is empty so we need to have Curr
+     * node check) -- The if condition ensures that left childs are kept first
+     * in processing (i.e pushed to stack first) if currNode not null retrieve
+     * left child and point currNode to left child // else will be called when
+     * currNode becomes null, i.e left most child is on the stack now we have to
+     * proces right child else Now we should take care of right child.
+     * Initialize currNode to rightChild and then continue loop!
+     * 
+     * @@@Important@@@ Note that currNode <- currNode.right will not check for
+     * NULL as it makes sure that first if loop skips for our left nodes on
+     * stack which does not have right child. end While
+     */
+
     public void inOrderIterative() {
 
-	Stack<BinarySearchTree.Node> stack = new Stack<BinarySearchTree.Node>(
-		100);
-
+	java.util.Stack<Node> stack = new java.util.Stack<Node>();
 	Node currNode = root;
-	// go to left most child
 
-	while (currNode != null) {
-	    stack.push(currNode);
-	    currNode = currNode.left;
-	}
-
-	while (!stack.isEmpty()) {
-
-	    // get the top element from the stack
-
-	    currNode = stack.pop();
-
-	    // get the right child
-
-	    Node rightChild = currNode.right;
-	    // find the left most child
-	    if (rightChild != null) {
-		currNode = rightChild;
-		while (currNode != null) {
-		    stack.push(currNode);
-		    currNode = currNode.left;
-		}
+	while (!stack.isEmpty() || currNode != null) {
+	    if (currNode != null) {
+		stack.push(currNode);
+		currNode = currNode.left;
 	    }
 
+	    // left most node. Time to print and then process right.
 	    else {
-		continue;
+		currNode = stack.pop();
+		System.out.print(currNode.value + " ");
+		currNode = currNode.right;
 	    }
-
 	}
 
     }
 
-    // Basically do preOrder. Use second stack to return the reverse order of
-    // postOrder
+    /*
+     * Idea : Use two stacks. Post order is reverse of reverse PreOrder -:).
+     * PostOrder LRN - PreOrder - NLR - reverse -NRL - REVERSE - LRN (post
+     * order) Use stack to do Iterative pre order ( reverse right and left -
+     * push right first, push left next)
+     */
     public void postOrderIterative() {
 
-	Stack<BinarySearchTree.Node> input = new Stack<BinarySearchTree.Node>(
-		100);
-	Stack<BinarySearchTree.Node> output = new Stack<BinarySearchTree.Node>(
-		100);
-
-	// Find the left most node
-	Node currNode = root;
-	input.push(currNode);
-
-	while (!input.isEmpty()) {
-
-	    currNode = input.popWithoutPrint();
-
-	    output.push(currNode);
-
+	java.util.Stack<Node> preOrderStack = new java.util.Stack<Node>();
+	java.util.Stack<Node> postOrderStack = new java.util.Stack<Node>();
+	preOrderStack.push(root);
+	while (!preOrderStack.isEmpty()) {
+	    Node currNode = preOrderStack.pop();
+	    postOrderStack.push(currNode);
 	    if (currNode.left != null) {
-		input.push(currNode.left);
-	    }
+		preOrderStack.push(currNode.left);
 
+	    }
 	    if (currNode.right != null) {
-		input.push(currNode.right);
+		preOrderStack.push(currNode.right);
 	    }
 
 	}
 
-	while (!output.isEmpty()) {
-	    output.pop();
+	while (!postOrderStack.isEmpty()) {
+	    System.out.print(postOrderStack.pop() + " ");
 	}
 
     }
+
+    /**
+     * Idea : Think about Post order traversal. You would only print the value
+     * after its children(subtrees) are printed SO WE WILL ONLY PRINT WHILE
+     * TRAVERSING BACK! we can have 3 traversals
+     * 
+     * Case 1 . Going down Case 2. Going Up from Left child Case 3 . Going Up
+     * from right child
+     * 
+     * Since we don't have parent pointers, we need to keep tracking using
+     * previous traversed node
+     * 
+     * if previous traversed node left child or right child equals current node.
+     * Then it is parent. (Case 1.)
+     * 
+     * Push the left child first if available and break.
+     * 
+     * Push the right child if available and break
+     * 
+     * if both are not available. Print the data. (leaf nodes)
+     * 
+     * 
+     * if the current node left child is equal previous node. then it is left
+     * child going UP (Case 2)
+     * 
+     * Push the right child if available. As in post order traversal we need to
+     * look at curr node's right child first.
+     * 
+     * if right child is not available, then POP - print the CURRNODE's data.
+     * 
+     * 
+     * If the current node right child is equal previous node. Then it is right
+     * child going up (Case 3)
+     * 
+     * If it is right child, we have taken care of it.then POP- Print the
+     * currnode data
+     * 
+     */
 
     public void postOrderIterativeUsingPrevNode() {
 
-	Stack<Node> stack = new Stack<Node>(100);
+	java.util.Stack<Node> stack = new java.util.Stack<Node>();
 
 	Node currNode = root;
 	Node prevNode = null;
 	stack.push(root);
-
 	while (!stack.isEmpty()) {
 	    currNode = stack.peek();
-	    // Traverse down the tree
 
 	    if (prevNode == null || prevNode.left == currNode
 		    || prevNode.right == currNode) {
@@ -270,22 +476,20 @@ public class BinarySearchTree {
 		} else if (currNode.right != null) {
 		    stack.push(currNode.right);
 		} else {
-		    // print the node
-		    stack.pop();
+		    System.out.print(stack.pop() + " ");
 		}
-	    }
 
-	    else if (currNode.left == prevNode) {
-
+	    } else if (prevNode == currNode.left) {
 		if (currNode.right != null) {
 		    stack.push(currNode.right);
 		} else {
-		    stack.pop();
+		    System.out.print(stack.pop() + " ");
+
 		}
 	    }
 
-	    else if (currNode.right == prevNode) {
-		stack.pop();
+	    else if (prevNode == currNode.right) {
+		System.out.print(stack.pop() + " ");
 	    }
 
 	    prevNode = currNode;

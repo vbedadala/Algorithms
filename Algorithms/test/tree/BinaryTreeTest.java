@@ -43,6 +43,15 @@ public class BinaryTreeTest {
 	public void testPreorderIt(){
 		bst.preOrderIterative();
 	}
+	@Test
+	public void testPostOrderIt(){
+		bst.postOrderIterative();
+	}
+	
+	@Test
+	public void testPostOrderUsingPrevNode(){
+		bst.postOrderIterativeUsingPrevNode();
+	}
 	
 	@Test
 	public void testPostorder(){
@@ -52,6 +61,11 @@ public class BinaryTreeTest {
 	@Test
 	public void testLevelorder(){
 		bst.levelOrder();
+	}
+	
+	@Test
+	public void testReverseLevelorder(){
+		bst.reverseLevelOrder();
 	}
 
 	
@@ -63,12 +77,12 @@ public class BinaryTreeTest {
 	
 	@Test
 	public void testPostorderIterative(){
-		bst.postOrderIterativeUsingPrevNode();
+		bst.postOrderIterative();
 	}
 	
 	@Test
 	public void testLevelorderUsingList(){
-		bst.levelOrderUsingList();
+		bst.printLevelByLevel();
 	}
 	
 	@Test

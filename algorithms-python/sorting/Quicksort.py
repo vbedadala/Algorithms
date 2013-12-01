@@ -49,8 +49,8 @@ def printList(lst):
 
 def __main__():
     unsorted = []
-    for i in range(1000000):
-        unsorted.append(random.randrange(0,1000000))
+    for i in range(10000000):
+        unsorted.append(random.randrange(0,10000000))
 
     # printList(unsorted)
     startTime = datetime.datetime.now()
