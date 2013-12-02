@@ -1,17 +1,18 @@
 package trees;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import stack.Stack;
+import org.apache.commons.lang3.SerializationUtils;
 
 public class BinarySearchTree {
 
     private static Node root = null;
 
-    public static class Node {
+    public static class Node implements Serializable {
 	private Integer value;
 	private Node left;
 	private Node right;
@@ -138,11 +139,18 @@ public class BinarySearchTree {
     }
 
     private Node minOfSubtree(Node node) {
-	while (node.left != null) {
+	while (node!=null && node.left != null) {
 	    node = node.left;
 	}
 	return node;
     }
+    
+    private Node maxOfSubtree(Node node) {
+    	while (node!=null && node.right != null) {
+    	    node = node.right;
+    	}
+    	return node;
+        }
 
     private Node find(Integer value, Node node) {
 
@@ -780,4 +788,81 @@ public class BinarySearchTree {
 
 	return Math.max((1 + depth(node.left)), (1 + depth(node.right)));
     }
+    
+    public boolean hasPathSum(int sum) {
+    	return hasPathSum(root, sum);
+    }
+    public boolean hasPathSum(Node node,int sum) {
+    	//Base case.
+    	if(sum<=0){
+    		return true;
+    	}
+    	if(node == null){
+    		return false;
+    	}
+    	return hasPathSum(node.left, sum-node.value) || hasPathSum(node.right, sum-node.value); 	
+    }
+    
+    public void mirror(){
+    	inOrder(root);
+    	System.out.println();
+    	mirror(root);
+    }
+
+    public Node mirror(Node node){
+    	if(node==null || (node.left==null && node.right==null)){
+    		return node;
+    	}
+    	Node temp = node.left;
+    	node.left= node.right;
+    	node.right = temp;
+    	if(node.left!=null){
+    	mirror(node.left);
+    	}
+    	if(node.right!=null){
+    	mirror(node.right);
+    	}
+    	return node;
+    }
+    
+    public boolean isMirror(){
+    	
+    	
+    	return isMirror(root,mirror(SerializationUtils.clone(root)));
+    }
+    public boolean isMirror(Node n1, Node n2){
+    	if(n1 ==null && n2 ==null){
+    		return true;
+    	}   	
+    	
+    return n1.value.equals(n2.value) && (isMirror(n1.left, n2.right)) && (isMirror(n1.right, n2.left));
+    }
+    
+    public boolean isBST(){
+      return	isBST(root);
+    }
+    
+    private boolean isBST(Node n) {
+    	if(n == null){
+    		return true;
+    	}
+    	
+    	if(n.left!=null && n.value < maxOfSubtree(n.left).value) {
+    		return false;
+    	}
+    	
+    	if(n.right!=null && n.value >= minOfSubtree(n.right).value) {
+    		return false;
+    	}
+    	
+    	if(!isBST(n.left) || !isBST(n.right) ){
+    		return false;
+    	}
+    	return true;
+    	}
+    
+    
+    	
+    	
+   
 }

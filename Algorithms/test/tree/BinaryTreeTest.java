@@ -8,6 +8,8 @@ import trees.BinarySearchTree.Node;
 
 public class BinaryTreeTest {
 	BinarySearchTree  bst;
+	BinarySearchTree  mirrorbst;
+
 	
 	@Before
 	public void setupBST(){
@@ -27,6 +29,8 @@ public class BinaryTreeTest {
 		bst.insert(3);
 		bst.insert(14);
 		bst.insert(29);	
+		
+		
 	}
 	
 	@Test
@@ -118,4 +122,23 @@ public class BinaryTreeTest {
 	   System.out.println("depth of binary tree " + bst.depth()) ;
 	}
 	
+	
+	@Test
+	public void testHasPathSum(){
+	   System.out.println("Binary tree has sum 20" + bst.hasPathSum(200)) ;
+	}
+	
+	@Test
+	public void testMirror(){
+		//bst.mirror();
+		//bst.inOrder();
+		System.out.print(bst.isMirror());
+	}
+	
+	@Test
+	public void testIsBst(){
+		//bst.mirror();
+		//bst.inOrder();
+		System.out.print(bst.isBST());
+	}
 }
