@@ -1,12 +1,13 @@
 package trees;
 
+import org.apache.commons.lang3.SerializationUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang3.SerializationUtils;
 
 public class BinarySearchTree {
 
