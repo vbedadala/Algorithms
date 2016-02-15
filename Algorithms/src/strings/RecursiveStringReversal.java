@@ -6,7 +6,7 @@ public class RecursiveStringReversal {
 
 	public static void main(String[] args) {
 
-		reverse(args[0]);
+		ireverse(args[0]);
 		System.out.println("Reversed String" + String.valueOf(reverse));
 	}
 
@@ -21,12 +21,27 @@ public class RecursiveStringReversal {
 	 */
 	private static String reverse(String input) {
 
-		if (input.length() == 1) {
-			return input;
-		}
+        if (input.length() == 1) {
+            return input;
+        }
 
-		reverse = reverse(input.substring(1)) + input.charAt(0);
-		return reverse;
-	}
+        reverse = reverse(input.substring(1)) + input.charAt(0);
+        return reverse;
+    }
 
+
+    private static String ireverse(String input) {
+         char[] str= input.toCharArray();
+        int j=input.length()-1;
+        int i=0;
+         while(i<j) {
+            char temp =str[i];
+            str[i]=str[j];
+            str[j]=temp;
+             i++;
+             j--;
+        }
+
+        return new String(str);
+    }
 }

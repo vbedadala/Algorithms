@@ -628,7 +628,7 @@ public class BinarySearchTree {
     // T1 has millions of nodes and T2 has hundreds of nodes, and each may have
     // duplicates.
 
-    // Given a value in a binary search tree, print all the paths (starting from
+    // Given a value in a binary QuickSelect tree, print all the paths (starting from
     // the root or any other node) which sum up to that value.
 
     // Given a binary tree.
@@ -638,7 +638,7 @@ public class BinarySearchTree {
 
     // Find kth smallest in BST
 
-    // For a given binary tree, largest binary search sub-tree should be found.
+    // For a given binary tree, largest binary QuickSelect sub-tree should be found.
 
     // public Node getLeftSibling(Node node) {
     //
