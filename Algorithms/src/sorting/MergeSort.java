@@ -5,7 +5,7 @@ public class MergeSort implements Sort {
 
     @Override
     public int[] sort(int[] input) {
-        input = mergeSort(input, new int[input.length], 0, input.length-1);
+        input = mergeSort(input, new int[input.length], 0, input.length - 1);
         for (int i = 0; i < input.length; i++) {
             System.out.println(input[i] + "    ");
         }
@@ -24,7 +24,7 @@ public class MergeSort implements Sort {
 
     private void merge(int[] input, int[] aux, int start, int mid, int end) {
         //copy to aux
-        for (int k = start; k <=end; k++) {
+        for (int k = start; k <= end; k++) {
             aux[k] = input[k];
         }
         int i = start;
@@ -33,7 +33,7 @@ public class MergeSort implements Sort {
             if (i > mid) {
                 input[k] = aux[j];
                 j++;
-            } else if (j >end) {
+            } else if (j > end) {
                 input[k] = aux[i];
                 i++;
             } else if (aux[i] < aux[j]) {

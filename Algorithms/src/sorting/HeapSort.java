@@ -7,10 +7,10 @@ import heap.MaxHeap;
  */
 public class HeapSort {
 
-    public void sort(int [] input) {
+    public void sort(int[] input) {
         MaxHeap heap = new MaxHeap(input);
-        int i=input.length;
-        while(i>0) {
+        int i = input.length;
+        while (i > 0) {
             System.out.println(heap.delMax());
             i--;
         }

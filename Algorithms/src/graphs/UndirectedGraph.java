@@ -50,9 +50,9 @@ public class UndirectedGraph {
         });
     }
 
-    public void dfsWithCC(int v,int count) {
+    public void dfsWithCC(int v, int count) {
         marked[v] = true;
-        component[v]=count;
+        component[v] = count;
         System.out.println(v);
         adj(v).stream().filter(it -> !marked[it]).forEach(it -> {
             edgeTo[it] = v;
@@ -62,14 +62,14 @@ public class UndirectedGraph {
     }
 
     public boolean dfsCycle(int v, int u) {
-        marked[v]=true;
-        for (int w : adj(v)){
-            if(!marked[w]) {
-                if(w==u){
+        marked[v] = true;
+        for (int w : adj(v)) {
+            if (!marked[w]) {
+                if (w == u) {
                     return true;
                 }
-                marked[w]=true;
-                dfsCycle(w,u);
+                marked[w] = true;
+                dfsCycle(w, u);
             }
         }
         return false;
@@ -85,7 +85,7 @@ public class UndirectedGraph {
     public void reset() {
         for (int i = 0; i < edgeTo.length; i++) {
             edgeTo[i] = -1;
-            marked[i]=false;
+            marked[i] = false;
         }
     }
 
@@ -104,33 +104,34 @@ public class UndirectedGraph {
 
         }
     }
+
     public void cc() {
-       int count=0;
-       for (int i=0; i < v; i++) {
-          count++;
-          dfsWithCC(i,count);
-       }
+        int count = 0;
+        for (int i = 0; i < v; i++) {
+            count++;
+            dfsWithCC(i, count);
+        }
     }
 
-    public void pathTo(int t,int s) {
+    public void pathTo(int t, int s) {
         Stack<Integer> stack = new Stack<>();
-        for (int i=t; i!=s; i=edgeTo[i]) {
+        for (int i = t; i != s; i = edgeTo[i]) {
             stack.push(i);
         }
         stack.push(s);
-        while(!stack.isEmpty()){
-           System.out.println(stack.pop());
+        while (!stack.isEmpty()) {
+            System.out.println(stack.pop());
         }
     }
 
 
     public void hasCycle() {
-       for ( int i =0; i< v; i++) {
-           if(dfsCycle(i,i)){
-               System.out.println("Cycle found");
-               break;
-           }
-       }
+        for (int i = 0; i < v; i++) {
+            if (dfsCycle(i, i)) {
+                System.out.println("Cycle found");
+                break;
+            }
+        }
 
     }
 }

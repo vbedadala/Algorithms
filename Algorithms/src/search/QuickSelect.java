@@ -9,7 +9,7 @@ public class QuickSelect {
 
     Random random = new Random();
 
-    public int select(int[] x, int nth, int start, int end) {
+    public int select(int[] x, int start, int end, int nth) {
         if (start < end) {
             int pivot = partition(x, start, end);
             int rank = pivot - start + 1;
@@ -17,9 +17,9 @@ public class QuickSelect {
                 return x[pivot];
             }
             if (nth < rank) {
-                return select(x, nth, start, pivot - 1);
+                return select(x, start, pivot - 1, nth);
             } else
-                return select(x, nth, pivot + 1, nth-rank);
+                return select(x, pivot + 1, end, nth - rank);
         }
         return -1;
     }

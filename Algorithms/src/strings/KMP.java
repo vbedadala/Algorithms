@@ -11,24 +11,24 @@ public class KMP {
         int f[] = new int[pattern.length];
 
         int j = 0, x = 0;
-        f[0] =0;
+        f[0] = 0;
 
         for (int k = 1; k < pattern.length; k++) {
             //first use f[k-1] to compute f[k]
             j = f[k - 1];
 
-            for(;;) {
-            if (pattern[k] == pattern[j]) {
+            for (; ; ) {
+                if (pattern[k] == pattern[j]) {
 
                     f[k] = j + 1;
                     break;
 
-             }
+                }
                 if (j <= 0) {
-                        break;
-                    }
+                    break;
+                }
 
-                        j =f[j];
+                j = f[j];
 
 
             }
@@ -36,7 +36,6 @@ public class KMP {
 
         return f;
     }
-
 
 
     public void match(String haystack, String needle) {
@@ -48,14 +47,13 @@ public class KMP {
             if (haystack.charAt(i) == needle.charAt(j)) {
                 i += 1;
                 j += 1;
-                if (j == needle.length()-1) {
+                if (j == needle.length() - 1) {
                     System.out.println("match found!");
                     break;
                 }
             } else if (j > 0) {
                 j = f[j];
-            }
-            else {
+            } else {
                 i++;
             }
 

@@ -10,8 +10,8 @@ public class KMPTest {
     @Test
     public void testFailureFunction() {
         KMP kmp = new KMP();
-       int x[] = kmp.failureFunction("ABABAC".toCharArray());
-     kmp.match("SDGSDGSDGSDGSDGHSDHGSGHSHABABACDSGFDSGS","ABABAC");
+        int x[] = kmp.failureFunction("ABABAC".toCharArray());
+        kmp.match("SDGSDGSDGSDGSDGHSDHGSGHSHABABACDSGFDSGS", "ABABAC");
         System.out.print(x);
     }
 }
