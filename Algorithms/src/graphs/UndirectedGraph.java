@@ -4,12 +4,13 @@ import java.util.*;
 
 /**
  * Created by vasant on 12/4/15.
+ *
  */
 public class UndirectedGraph {
 
     private List<Integer>[] adjList;
 
-    private boolean[] marked;
+    private boolean[] visited;
 
     private int[] edgeTo;
 
@@ -17,14 +18,19 @@ public class UndirectedGraph {
 
     private int v;
 
+    private boolean cycleFound;
+
     public UndirectedGraph(int v) {
         this.v = v;
-        this.marked = new boolean[v];
+        this.visited = new boolean[v];
         this.edgeTo = new int[v];
         this.adjList = new List[v];
         this.component = new int[v];
         for (int i = 0; i < edgeTo.length; i++) {
             edgeTo[i] = -1;
+        }
+        for (int i = 0; i < edgeTo.length; i++) {
+            visited[i] = false;
         }
         for (int i = 0; i < v; i++) {
             this.adjList[i] = new LinkedList<>();
@@ -41,35 +47,45 @@ public class UndirectedGraph {
     }
 
     public void dfs(int v) {
-        marked[v] = true;
-        System.out.println(v);
-        adj(v).stream().filter(it -> !marked[it]).forEach(it -> {
-            edgeTo[it] = v;
-            marked[it] = true;
-            dfs(it);
-        });
+        visit(v);
+        for(int x : adj(v)) {
+            if(!visited[x]) {
+                edgeTo[x]=v;
+                dfs(x);
+            }
+        }
     }
 
     public void dfsWithCC(int v, int count) {
-        marked[v] = true;
+        visit(v);
         component[v] = count;
-        System.out.println(v);
-        adj(v).stream().filter(it -> !marked[it]).forEach(it -> {
-            edgeTo[it] = v;
-            marked[it] = true;
-            dfs(it);
-        });
+        for(int x : adj(v)) {
+            if(!visited[x]) {
+                System.out.println(x + " connected component " +  count);
+                dfsWithCC(x,count);
+            }
+        }
     }
 
     public boolean dfsCycle(int v, int u) {
-        marked[v] = true;
+        if(cycleFound) {
+            return true;
+        }
+        visit(v);
+
         for (int w : adj(v)) {
-            if (!marked[w]) {
-                if (w == u) {
+            if (!visited[w]) {
+                edgeTo[w] =v;
+                dfsCycle(w, v);
+            }
+            else {
+                if (w !=u & !cycleFound) {
+                    System.out.println("cycleFound  +" +  u);
+                    pathTo(v,w);
+                    this.cycleFound=true;
                     return true;
+
                 }
-                marked[w] = true;
-                dfsCycle(w, u);
             }
         }
         return false;
@@ -85,37 +101,49 @@ public class UndirectedGraph {
     public void reset() {
         for (int i = 0; i < edgeTo.length; i++) {
             edgeTo[i] = -1;
-            marked[i] = false;
+            visited[i] = false;
         }
+    }
+
+    private void visit(int v) {
+        System.out.print(v+ " ");
+        visited[v]=true;
     }
 
     public void bfs(int v) {
         Queue<Integer> queue = new ArrayDeque<>();
         queue.add(v);
-        marked[v] = true;
+        visit(v);
         while (!queue.isEmpty()) {
             int w = queue.remove();
-            System.out.println(w);
-            adj(w).stream().filter(it -> !marked[it]).forEach(it -> {
-                marked[it] = true;
-                edgeTo[it] = w;
-                queue.add(it);
-            });
-
+            for (int x : adj(w)) {
+                if(!visited[x]) {
+                    visit(x);
+                    edgeTo[x] = w;
+                    queue.add(x);
+                }
+            }
         }
     }
+
 
     public void cc() {
         int count = 0;
         for (int i = 0; i < v; i++) {
-            count++;
-            dfsWithCC(i, count);
+            if(!visited[i]) {
+                count++;
+                dfsWithCC(i, count);
+            }
         }
     }
 
     public void pathTo(int t, int s) {
         Stack<Integer> stack = new Stack<>();
         for (int i = t; i != s; i = edgeTo[i]) {
+            if(i==-1) {
+                System.out.println("path does not exist");
+
+            }
             stack.push(i);
         }
         stack.push(s);
@@ -124,14 +152,21 @@ public class UndirectedGraph {
         }
     }
 
-
-    public void hasCycle() {
+    //verify back edges in DFS Forrest
+    public boolean hasCycle() {
+        this.cycleFound=false;
         for (int i = 0; i < v; i++) {
-            if (dfsCycle(i, i)) {
-                System.out.println("Cycle found");
-                break;
+            //create DFS trees for each vertex
+
+            if (!visited[i] && dfsCycle(i, -1)) {
+                return true;
             }
         }
 
+        return false;
+    }
+
+    public boolean connected(int x, int y) {
+        return component[x]==component[y];
     }
 }
