@@ -12,13 +12,20 @@ public class UndirectedGraph {
 
     private boolean[] visited;
 
+    private HashMap<String,Integer> vertices = new HashMap<>();
+
     private int[] edgeTo;
 
     private int[] component;
 
+    private boolean[] color;
+
     private int v;
 
     private boolean cycleFound;
+
+    private boolean isBiPartite=true;
+
 
     public UndirectedGraph(int v) {
         this.v = v;
@@ -26,6 +33,28 @@ public class UndirectedGraph {
         this.edgeTo = new int[v];
         this.adjList = new List[v];
         this.component = new int[v];
+        this.color = new boolean[v];
+        for (int i = 0; i < edgeTo.length; i++) {
+            edgeTo[i] = -1;
+        }
+        for (int i = 0; i < edgeTo.length; i++) {
+            visited[i] = false;
+        }
+        for (int i = 0; i < v; i++) {
+            this.adjList[i] = new LinkedList<>();
+        }
+    }
+
+    public UndirectedGraph(int v,List<String> vnames) {
+        this.v = v;
+        this.visited = new boolean[v];
+        this.edgeTo = new int[v];
+        this.adjList = new List[v];
+        this.component = new int[v];
+        this.color = new boolean[v];
+        for (int i=0; i < v; i++) {
+            vertices.put(vnames.get(i),i);
+        }
         for (int i = 0; i < edgeTo.length; i++) {
             edgeTo[i] = -1;
         }
@@ -44,6 +73,12 @@ public class UndirectedGraph {
     public void addEdge(int v, int w) {
         adjList[v].add(w);
         adjList[w].add(v);
+    }
+
+
+
+    public int vindex(String name) {
+        return vertices.get(name);
     }
 
     public void dfs(int v) {
@@ -106,7 +141,7 @@ public class UndirectedGraph {
     }
 
     private void visit(int v) {
-        System.out.print(v+ " ");
+        System.out.print(v + " ");
         visited[v]=true;
     }
 
@@ -146,6 +181,8 @@ public class UndirectedGraph {
             }
             stack.push(i);
         }
+        System.out.println();
+
         stack.push(s);
         while (!stack.isEmpty()) {
             System.out.println(stack.pop());
@@ -166,7 +203,44 @@ public class UndirectedGraph {
         return false;
     }
 
+    private void dfsColor(int v) {
+        visit(v);
+        for(int w : adj(v)) {
+            if(cycleFound){
+                return;
+            }
+            if(!visited[w]){
+                color[w]=!color[v];
+                edgeTo[w]=v;
+                dfsColor(w);
+            }
+            else if(color[w]==color[v]) {
+                isBiPartite=false;
+                cycleFound=true;
+
+                pathTo(v,w);
+                return;
+            }
+        }
+
+    }
+
+    public boolean isBiPartite() {
+
+        for (int i=0; i < v; i ++) {
+            if(!visited[i] ){
+                dfsColor(i);
+            }
+            else {
+                return false;
+            }
+        }
+        return isBiPartite;
+    }
+
     public boolean connected(int x, int y) {
         return component[x]==component[y];
     }
+
+
 }

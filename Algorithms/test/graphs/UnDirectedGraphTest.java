@@ -21,8 +21,11 @@ public class UnDirectedGraphTest {
         g.addEdge( 9 ,12);
         g.addEdge(5 ,4);
         g.addEdge(0 ,2);
-        g.addEdge(11, 12);
         g.addEdge(9 ,10);
+        g.addEdge(11 ,1);
+        //g.addEdge(1 ,0);
+
+
         g.addEdge(0 ,6);
         g.addEdge(7 ,8);
         g.addEdge(9 ,11);
@@ -47,6 +50,12 @@ public class UnDirectedGraphTest {
     @Test
     public void testCycle() {
         g.hasCycle();
+
+    }
+
+    @Test
+    public void testBiParttite() {
+        g.isBiPartite();
 
     }
 
