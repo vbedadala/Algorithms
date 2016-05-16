@@ -64,7 +64,7 @@ public class DirectedGraph {
     }
 
     private void visit(int v) {
-        System.out.println(v +" ");
+        System.out.println(v + " ");
 
         visited[v]=true;
     }
@@ -103,6 +103,7 @@ public class DirectedGraph {
             v =stack.pop();
             for (int w : adj(v)) {
                 if (!visited[w]) {
+                    visit(w);
                     edgeTo[w] = v;
                     stack.push(w);
                 }
@@ -135,6 +136,7 @@ public class DirectedGraph {
 
     public void dfsCycle(int v){
         visit(v);
+        onStack[v]=true;
         for(int w: adj(v)){
             if(cycleFound){
                 return;
@@ -143,7 +145,7 @@ public class DirectedGraph {
                 edgeTo[w]=v;
                 dfsCycle(v);
             }
-            else if(onStack[v]){
+            else if(onStack[w]){
                 cycleFound=true;
                 cycle =pathTo(v,w);
             }
@@ -166,12 +168,16 @@ public class DirectedGraph {
      *
      */
     public void topologicalSort() {
+       postOrder = new Stack<>(V);
+
         for(int i=0; i<V; i++){
             if(!visited[i]){
                 dfsTop(i);
             }
         }
-
+        while(!postOrder.isEmpty()) {
+            System.out.println(postOrder.pop());
+        }
 
     }
 
@@ -182,5 +188,7 @@ public class DirectedGraph {
         }
         return path;
     }
+
+
 
 }
