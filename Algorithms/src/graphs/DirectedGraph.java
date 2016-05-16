@@ -19,8 +19,6 @@ public class DirectedGraph {
 
     private int[] component;
 
-    private boolean[] color;
-
     private int V;
 
     private int[] indegree;
@@ -39,7 +37,6 @@ public class DirectedGraph {
         this.edgeTo = new int[v];
         this.adjList = new List[v];
         this.component = new int[v];
-        this.color = new boolean[v];
         this.onStack = new boolean[v];
         this.indegree = new int[v];
         for (int i = 0; i < edgeTo.length; i++) {
@@ -167,7 +164,7 @@ public class DirectedGraph {
      * give that v is completed after w. reverse post ordeer
      *
      */
-    public void topologicalSort() {
+    public Stack<Integer> topologicalSort() {
        postOrder = new Stack<>(V);
 
         for(int i=0; i<V; i++){
@@ -178,7 +175,7 @@ public class DirectedGraph {
         while(!postOrder.isEmpty()) {
             System.out.println(postOrder.pop());
         }
-
+    return postOrder;
     }
 
     public Stack<Integer> pathTo(int s, int t) {
@@ -189,6 +186,43 @@ public class DirectedGraph {
         return path;
     }
 
+    public DirectedGraph reverse() {
+        DirectedGraph rg = new DirectedGraph(V);
 
+        for(int i=0; i<V; i++) {
+            for(int w : adj(i)) {
+                rg.addEdge(w,i);
+            }
+        }
+        return rg;
+
+    }
+
+    public void dfsWithCC(int v, int count){
+        visit(v);
+        for(int w : adj(v)) {
+            if(!visited[w]) {
+                edgeTo[w]=v;
+                dfsWithCC(w,count);
+            }
+        }
+    }
+    
+    //Strong connected components
+    public int[] kcc() {
+       DirectedGraph reverse = this.reverse();
+        Stack<Integer> topologicalOrderForReverse = reverse.topologicalSort();
+        int count=0;
+       //Consider reverse post order for reverse graph, since topological order of current graph gives the first vertex as source vertex instead of sink. KCC algorithm
+        //explores sink vertices in kernal dag
+        while(!topologicalOrderForReverse.isEmpty()) {
+
+           int v = topologicalOrderForReverse.pop();
+           dfsWithCC(v,count);
+           count ++;
+       }
+
+        return component;
+    }
 
 }
