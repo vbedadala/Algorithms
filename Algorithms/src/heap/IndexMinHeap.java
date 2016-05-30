@@ -5,13 +5,13 @@ import java.util.NoSuchElementException;
 /**
  * Created by vasantbedadala on 2/15/16.
  */
-public class IndexMinHeap {
+public class IndexMinHeap<T extends Comparable<T>> {
 
     //heap positions
-    int[] pq;
+    int [] pq;
     //array of keys to heap indexes
-    int[] qp;
-    int [] keys;
+    int [] qp;
+    Object [] keys;
 
 
     int size;
@@ -20,17 +20,17 @@ public class IndexMinHeap {
     public IndexMinHeap(int size) {
         pq = new int[size + 1];
         qp = new int[size + 1];
-        keys = new int[size +1];
+        keys = new Object[size +1];
         this.size = size;
         this.N=0;
     }
 
 
-    public int min() {
+    public T min() {
         if(!isEmpty()) {
-            return keys[pq[1]];
+            return(T) keys[pq[1]];
         }
-        return -1;
+        return null;
     }
 
     public int minIndex() {
@@ -41,18 +41,21 @@ public class IndexMinHeap {
         return -1;
     }
 
-    public int delMin() {
+    public T delMin() {
         if(!isEmpty()) {
-            int min = keys[pq[1]];
+            T min = (T) keys[pq[1]];
             exch( 1, N--);
             qp[pq[1]]=-1;
             sink(1);
                 return min;
         }
-        return -1;
+        return null;
     }
 
-    public void changeKey(int i, int key) {
+    public T getKey(int i) {
+        return (T) keys[i];
+    }
+    public void changeKey(int i, T key) {
         keys[i]=key;
         swim(qp[i]);
         sink(qp[i]);
@@ -80,18 +83,18 @@ public class IndexMinHeap {
     private boolean isMinHeap(int k) {
         int left = 2 * k;
         int right = 2 * k + 1;
-        if (keys[pq[k]] >= left) return false;
-        if (keys[pq[k]] >= right) return false;
+        if (((T)keys[pq[k]]).compareTo((T)keys[left])>=0) return false;
+        if (((T)keys[pq[k]]).compareTo((T)keys[right])>=0) return false;
         return isMinHeap(left) && isMinHeap(right);
     }
 
     private void sink(int key) {
         while (2 * key <=N) {
             int k = 2 * key;
-            if (k<N && keys[pq[k]] > keys[pq[k + 1]]) {
+            if (k<N && ((T)keys[pq[k]]).compareTo((T)keys[pq[k + 1]]) >=1) {
                 k = k + 1;
             }
-            if (keys[pq[key]]< keys[pq[k]])
+            if (((T)keys[pq[key]]).compareTo((T) keys[pq[k]]) <0)
                 break;
             exch(key, k);
             key = k;
@@ -101,7 +104,7 @@ public class IndexMinHeap {
 
     private void swim(int key) {
         //while not at root and less than parent
-        while (key != 1 && keys[pq[key]] < keys[pq[(int) Math.floor(key / 2)]]) {
+        while (key != 1 && (((T)keys[pq[key]]).compareTo((T)keys[pq[(int) Math.floor(key / 2)]])<0)) {
             exch(key, (int) Math.floor(key / 2));
             key = (int) Math.floor(key / 2);
         }
@@ -118,7 +121,7 @@ public class IndexMinHeap {
 
 
 
-    public void insert(int i,int key) {
+    public void insert(int i,T key) {
 
         this.N++;
         pq[N] = i;

@@ -16,7 +16,7 @@ public class StreamingMedian {
 
 private int n=0;
     public void median(int[] keys) {
-        MinHeap minHeap = new MinHeap(200);
+        MinHeap<Integer> minHeap = new MinHeap<>(200);
         MaxHeap maxHeap = new MaxHeap(200);
 
 

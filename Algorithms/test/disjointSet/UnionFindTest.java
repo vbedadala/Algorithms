@@ -3,6 +3,8 @@ package disjointSet;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import java.util.stream.IntStream;
+
 /**
  * Created by vasantbedadala on 4/24/16.
  */
@@ -10,7 +12,7 @@ public class UnionFindTest {
 
     @Test
     public void testUnionAndFind() {
-        UnionFind uf = new UnionFind(100);
+        UnionFind uf = new UnionFind(IntStream.range(0,100).mapToObj(e -> new Integer(e)).toArray());
         uf.union(1,3);
         Assert.assertEquals(true, uf.connected(1,3));
         Assert.assertEquals(false, uf.connected(1,4));

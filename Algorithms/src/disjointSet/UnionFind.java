@@ -1,30 +1,41 @@
 package disjointSet;
 
+import java.util.HashMap;
+
 /**
  * Created by vasantbedadala on 4/24/16.
  */
-public class UnionFind {
+public class UnionFind<E>{
 
     private int[] ds;
+    private HashMap<E,Integer> elementToDSMapping;
     private int[] rank;
 
-    public UnionFind(int size) {
-        ds = new int[size];
-        rank= new int[size];
+    public UnionFind( Object[] elements) {
+        ds = new int[elements.length];
+        rank= new int[elements.length];
+        elementToDSMapping = new HashMap<>();
 
-        for(int i=0; i < size ; i++) {
+        for(int i=0; i < elements.length ; i++) {
             ds[i]=i;
             rank[i]=1;
+            elementToDSMapping.put((E)elements[i],i);
         }
     }
 
-    public boolean connected(int x, int y) {
-        return root(x)==root(y);
+    public boolean connected(E x, E y) {
+        if(!elementToDSMapping.containsKey(x) || !elementToDSMapping.containsKey(y)) {
+            return false;
+        }
+        return root(elementToDSMapping.get(x))==root(elementToDSMapping.get(y));
     }
 
-    public void union(int x, int y) {
-        int r1 = root(x);
-        int r2 = root(y);
+    public void union(E x, E y) {
+        if(!elementToDSMapping.containsKey(x) || !elementToDSMapping.containsKey(y)) {
+            return;
+        }
+        int r1 = root(elementToDSMapping.get(x));
+        int r2 = root(elementToDSMapping.get(y));
         if(r1 == r2) {
             return;
         }
