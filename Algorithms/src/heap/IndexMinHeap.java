@@ -61,7 +61,7 @@ public class IndexMinHeap<T extends Comparable<T>> {
         sink(qp[i]);
     }
 
-    public void decreaseKey(int i, int key) {
+    public void decreaseKey(int i, T key) {
        if(!containsIndex(i)) {
            throw new NoSuchElementException("Index not in the priority queue");
 
@@ -70,7 +70,7 @@ public class IndexMinHeap<T extends Comparable<T>> {
         swim(qp[i]);
     }
 
-    public void increaseKey(int i, int key) {
+    public void increaseKey(int i, T key) {
         if(!containsIndex(i)) {
             throw new NoSuchElementException("Index not in the priority queue");
 

@@ -27,6 +27,9 @@ public class WeightedUndirectedGraph{
 
     private List<WeightedEdge> allEdges;
 
+    IndexMinHeap<Double> pqSp = new IndexMinHeap<>(nodeAdjacency.keySet().size());
+
+
 
     public WeightedUndirectedGraph(String ... nodes) {
 
@@ -137,39 +140,70 @@ public class WeightedUndirectedGraph{
 
 
     public void primMST() {
-        IndexMinHeap<WeightedEdge> pq = new IndexMinHeap<>(nodeAdjacency.keySet().size());
-        pq.insert(1, null);
         for(int v : nodeAdjacency.keySet()) {
             distTo[v]= Double.POSITIVE_INFINITY;
         }
+        pqSp.insert(0,distTo[0]);
 
-        while(!pq.isEmpty()) {
-            int node =pq.minIndex();
-            WeightedEdge e = pq.delMin();
-            if(e!=null) {
-                mst.add(e);
-            }
+        while(!pqSp.isEmpty()) {
+            int node =pqSp.minIndex();
+            pqSp.delMin();
+
             for(WeightedEdge edge : nodeAdjacency.get(node)) {
                 int adjNode = nodeLookup.get(edge.other(node));
-                if(distTo[adjNode] > e.getWeight()) {
-                    if (!pq.containsIndex(adjNode)) {
-                            pq.decreaseKey(adjNode, edge.getWeight().intValue());
+                if(distTo[adjNode] > distTo[node]) {
+                    if (!pqSp.containsIndex(adjNode)) {
+                        edgeTo[adjNode] = node;
+                        pqSp.decreaseKey(adjNode, distTo[node]);
                         }
                         else {
-                            pq.insert(adjNode,edge);
+                        pqSp.insert(adjNode,distTo[adjNode]);
                         }
                     }
                 }
             }
 
+        //follow edge pointers to get MST
+
         }
 
 
     public void djikstra() {
+        //Initialize the distance for each vertex to Infinity
+        for(int v : nodeAdjacency.keySet()) {
+            distTo[v] = Double.POSITIVE_INFINITY;
+        }
 
+        pqSp.insert(0, distTo[0]);
+        while(pqSp.isEmpty()) {
+            int node = pqSp.minIndex();
+            pqSp.delMin();
+            for(WeightedEdge e : nodeAdjacency.get(node)) {
+                relax(node,e.other(node),e);
+            }
+
+        }
     }
 
 
+    private void relax(int v, int w, WeightedEdge e) {
 
+        if(distTo[w] > distTo[v] + e.weight) {
+
+            //parent pointer
+            edgeTo[w] =v;
+            // edge relaxation
+            distTo[w] = distTo[v] + e.weight;
+            //update PQ
+            if(pqSp.containsIndex(w)) {
+                pqSp.decreaseKey(w, distTo[w]);
+            }
+            else {
+                pqSp.insert(w,distTo[w]);
+            }
+
+        }
+
+    }
 
 }

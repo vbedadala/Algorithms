@@ -119,7 +119,7 @@ public class DirectedGraph {
     public boolean hasCycle() {
         for(int i=0; i< V; i++) {
             if(!visited[i])
-             dfs(i);
+                dfsCycle(i);
         }
         if(cycleFound){
             System.out.println("Cycle Found :");
